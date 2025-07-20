@@ -1,0 +1,89 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+  
+  cloud:
+    gateway:
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOriginPatterns: "*"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+              - PATCH
+            allowedHeaders: "*"
+            allowCredentials: true
+            maxAge: 3600
+
+      routes:
+        # Users Service
+        - id: users-service
+          uri: ${USERS_SERVICE_URL:http://localhost:8081}
+          predicates:
+            - Path=/api/users/**
+          filters:
+            - StripPrefix=1
+
+        # Auth Service
+        - id: auth-service
+          uri: ${AUTH_SERVICE_URL:http://localhost:8082}
+          predicates:
+            - Path=/api/auth/**
+          filters:
+            - StripPrefix=1
+
+        # Products Service
+        - id: prod-service
+          uri: ${PROD_SERVICE_URL:http://localhost:8083}
+          predicates:
+            - Path=/api/products/**
+          filters:
+            - StripPrefix=1
+
+        # File Service
+        - id: file-service
+          uri: ${FILE_SERVICE_URL:http://localhost:8084}
+          predicates:
+            - Path=/api/files/**
+          filters:
+            - StripPrefix=1
+
+        # Orders Service
+        - id: order-service
+          uri: ${ORDER_SERVICE_URL:http://localhost:8085}
+          predicates:
+            - Path=/api/orders/**
+          filters:
+            - StripPrefix=1
+
+        # Stats Service
+        - id: stats-service
+          uri: ${STATS_SERVICE_URL:http://localhost:8086}
+          predicates:
+            - Path=/api/stats/**
+          filters:
+            - StripPrefix=1
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,gateway
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    org.springframework.web.cors: DEBUG
+    com.microservices.gateway: DEBUG
