@@ -9,52 +9,46 @@ spring:
     gateway:
       routes:
         - id: users-service
-          uri: lb://users-service # Mantenemos lb://
+          uri: lb://users-service
           predicates:
             - Path=/api/users/**
           filters:
             - StripPrefix=1
-            - DedupeResponseHeader=Access-Control-Allow-Origin, Access-Control-Allow-Credentials
 
         - id: auth-service
-          uri: lb://auth-service # Mantenemos lb://
+          uri: lb://auth-service
           predicates:
             - Path=/api/auth/**
           filters:
             - StripPrefix=1
-            - DedupeResponseHeader=Access-Control-Allow-Origin, Access-Control-Allow-Credentials
 
         - id: prod-service
-          uri: lb://prod-service # Mantenemos lb://
+          uri: lb://prod-service
           predicates:
             - Path=/api/products/**
           filters:
             - StripPrefix=1
-            - DedupeResponseHeader=Access-Control-Allow-Origin, Access-Control-Allow-Credentials
 
         - id: file-service
-          uri: lb://file-service # Mantenemos lb://
+          uri: lb://file-service
           predicates:
             - Path=/api/files/**
           filters:
             - StripPrefix=1
-            - DedupeResponseHeader=Access-Control-Allow-Origin, Access-Control-Allow-Credentials
 
         - id: order-service
-          uri: lb://order-service-deploy # Mantenemos lb:// (usa el nombre exacto de Railway)
+          uri: lb://order-service-deploy
           predicates:
             - Path=/api/orders/**
           filters:
             - StripPrefix=1
-            - DedupeResponseHeader=Access-Control-Allow-Origin, Access-Control-Allow-Credentials
 
         - id: stats-service
-          uri: lb://stats-service # Mantenemos lb://
+          uri: lb://stats-service
           predicates:
             - Path=/api/stats/**
           filters:
             - StripPrefix=1
-            - DedupeResponseHeader=Access-Control-Allow-Origin, Access-Control-Allow-Credentials
 
         - id: health
           uri: http://localhost:8080/actuator/health
@@ -62,14 +56,11 @@ spring:
             - Path=/health
 
     loadbalancer:
-      # Aunque Ribbon está deprecado, esta configuración sigue siendo la forma de inyectar IPs estáticas.
       ribbon:
-        enabled: false # Asegurarse de que no usa el cliente de Ribbon si está presente (lo controla Spring Cloud LoadBalancer ahora)
-      
+        enabled: false
       clients:
         users-service:
           ribbon:
-            # Aquí es donde usamos la variable de entorno y le añadimos el puerto
             listOfServers: ${USERS_SERVICE_URL}:8080
         auth-service:
           ribbon:
@@ -80,8 +71,7 @@ spring:
         file-service:
           ribbon:
             listOfServers: ${FILE_SERVICE_URL}:8080
-        # Asegúrate de que este nombre (order-service-deploy) coincide con el nombre de tu servicio en Railway
-        order-service-deploy: 
+        order-service-deploy:
           ribbon:
             listOfServers: ${ORDER_SERVICE_URL}:8080
         stats-service:
