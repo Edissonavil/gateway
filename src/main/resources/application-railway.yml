@@ -25,24 +25,24 @@ spring:
             - StripPrefix=1
         
         # Ruta para Products Service
-        - id: products-service
-          uri: http://products-service.railway.internal
+        - id: prod-service
+          uri: http://prod-service-deploy.railway.internal
           predicates:
             - Path=/api/products/**
           filters:
             - StripPrefix=1
         
         # Ruta para Files Service
-        - id: files-service
-          uri: http://files-service.railway.internal
+        - id: file-service
+          uri: http://file-service.railway.internal
           predicates:
             - Path=/api/files/**
           filters:
             - StripPrefix=1
         
         # Ruta para Orders Service
-        - id: orders-service
-          uri: http://orders-service.railway.internal
+        - id: order-service-deploy
+          uri: http://order-service-deploy.railway.internal
           predicates:
             - Path=/api/orders/**
           filters:
