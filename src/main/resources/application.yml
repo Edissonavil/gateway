@@ -5,13 +5,16 @@ spring:
   application:
     name: aec-gateway
 
-  # desactiva el filtro WeightCalculatorWebFilter que está lanzando el stack trace
   cloud:
     gateway:
-      filter:
-        weight:
-          enabled: false
-
+      routes:
+        - id: users-service
+          uri: ${USERS_SERVICE_URL:http://localhost:8081}
+          predicates:
+            - Path=/api/users/**
+          filters:
+            - StripPrefix=1
+            
       default-filters:
         - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
 

@@ -1,0 +1,69 @@
+# application-railway.yml  (producción, perfil railway)
+spring:
+  config:
+    activate:
+      on-profile: railway
+
+  cloud:
+    gateway:
+      routes:
+        - id: users-service
+          uri: http://${{users-service.RAILWAY_PRIVATE_DOMAIN}}
+          predicates:
+            - Path=/api/users/**
+          filters:
+            - StripPrefix=1
+
+        - id: auth-service
+          uri: http://${{auth-service.RAILWAY_PRIVATE_DOMAIN}}
+          predicates:
+            - Path=/api/auth/**
+          filters:
+            - StripPrefix=1
+
+        - id: prod-service
+          uri: http://${{prod-service.RAILWAY_PRIVATE_DOMAIN}}
+          predicates:
+            - Path=/api/products/**
+          filters:
+            - StripPrefix=1
+
+        - id: file-service
+          uri: http://${{file-service.RAILWAY_PRIVATE_DOMAIN}}
+          predicates:
+            - Path=/api/files/**
+          filters:
+            - StripPrefix=1
+
+        - id: order-service
+          uri: http://${{order-service-deploy.RAILWAY_PRIVATE_DOMAIN}}
+          predicates:
+            - Path=/api/orders/**
+          filters:
+            - StripPrefix=1
+
+        - id: stats-service
+          uri: http://${{stats-service.RAILWAY_PRIVATE_DOMAIN}}
+          predicates:
+            - Path=/api/stats/**
+          filters:
+            - StripPrefix=1
+
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOriginPatterns: "*"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+              - PATCH
+            allowedHeaders: "*"
+            allowCredentials: true
+            maxAge: 3600
+
+server:
+  port: ${PORT:8080}
+
