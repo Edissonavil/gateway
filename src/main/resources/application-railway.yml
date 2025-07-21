@@ -1,4 +1,3 @@
-# application-railway.yml  (producción, perfil railway)
 spring:
   config:
     activate:
@@ -8,42 +7,42 @@ spring:
     gateway:
       routes:
         - id: users-service
-          uri: http://${{users-service.RAILWAY_PRIVATE_DOMAIN}}
+          uri: ${USERS_SERVICE_URL}
           predicates:
             - Path=/api/users/**
           filters:
             - StripPrefix=1
 
         - id: auth-service
-          uri: http://${{auth-service.RAILWAY_PRIVATE_DOMAIN}}
+          uri: ${AUTH_SERVICE_URL}
           predicates:
             - Path=/api/auth/**
           filters:
             - StripPrefix=1
 
         - id: prod-service
-          uri: http://${{prod-service.RAILWAY_PRIVATE_DOMAIN}}
+          uri: ${PROD_SERVICE_URL}
           predicates:
             - Path=/api/products/**
           filters:
             - StripPrefix=1
 
         - id: file-service
-          uri: http://${{file-service.RAILWAY_PRIVATE_DOMAIN}}
+          uri: ${FILE_SERVICE_URL}
           predicates:
             - Path=/api/files/**
           filters:
             - StripPrefix=1
 
         - id: order-service
-          uri: http://${{order-service-deploy.RAILWAY_PRIVATE_DOMAIN}}
+          uri: ${ORDER_SERVICE_URL}
           predicates:
             - Path=/api/orders/**
           filters:
             - StripPrefix=1
 
         - id: stats-service
-          uri: http://${{stats-service.RAILWAY_PRIVATE_DOMAIN}}
+          uri: ${STATS_SERVICE_URL}
           predicates:
             - Path=/api/stats/**
           filters:
@@ -67,3 +66,7 @@ spring:
 server:
   port: ${PORT:8080}
 
+logging:
+  level:
+    org.springframework.cloud.gateway: INFO
+    root: INFO
