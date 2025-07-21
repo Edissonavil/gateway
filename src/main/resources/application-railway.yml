@@ -1,50 +1,48 @@
 spring:
+  config:
+    activate:
+      on-profile: railway
+
   cloud:
     gateway:
       routes:
-        # Users Service - Railway Internal
         - id: users-service-railway
-          uri: http://users-service # ¡CAMBIO: de https:// a http:// y simplificación del nombre!
+          uri: http://users-service
           predicates:
             - Path=/api/users/**
           filters:
             - StripPrefix=1
 
-        # Auth Service - Railway Internal
         - id: auth-service-railway
-          uri: http://auth-service # ¡CAMBIO!
+          uri: http://auth-service
           predicates:
             - Path=/api/auth/**
           filters:
             - StripPrefix=1
 
-        # Products Service - Railway Internal
         - id: prod-service-railway
-          uri: http://prod-service # ¡CAMBIO!
+          uri: http://prod-service
           predicates:
             - Path=/api/products/**
           filters:
             - StripPrefix=1
 
-        # File Service - Railway Internal
         - id: file-service-railway
-          uri: http://file-service # ¡CAMBIO!
+          uri: http://file-service
           predicates:
             - Path=/api/files/**
           filters:
             - StripPrefix=1
 
-        # Orders Service - Railway Internal
         - id: order-service-railway
-          uri: http://order-service-deploy # ¡CAMBIO!
+          uri: http://order-service-deploy
           predicates:
             - Path=/api/orders/**
           filters:
             - StripPrefix=1
 
-        # Stats Service - Railway Internal
         - id: stats-service-railway
-          uri: http://stats-service # ¡CAMBIO!
+          uri: http://stats-service
           predicates:
             - Path=/api/stats/**
           filters:

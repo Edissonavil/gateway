@@ -1,10 +1,10 @@
 server:
-  port: 8080
+  port: ${PORT:8080}
 
 spring:
   application:
     name: aec-gateway
-  
+
   cloud:
     gateway:
       default-filters:
@@ -25,49 +25,43 @@ spring:
             maxAge: 3600
 
       routes:
-        # Users Service
         - id: users-service
-          uri: ${USERS_SERVICE_URL:http://localhost:8081}
+          uri: ${USERS_SERVICE_URL:http://users-service}
           predicates:
             - Path=/api/users/**
           filters:
             - StripPrefix=1
 
-        # Auth Service
         - id: auth-service
-          uri: ${AUTH_SERVICE_URL:http://localhost:8082}
+          uri: ${AUTH_SERVICE_URL:http://auth-service}
           predicates:
             - Path=/api/auth/**
           filters:
             - StripPrefix=1
 
-        # Products Service
         - id: prod-service
-          uri: ${PROD_SERVICE_URL:http://localhost:8083}
+          uri: ${PROD_SERVICE_URL:http://prod-service}
           predicates:
             - Path=/api/products/**
           filters:
             - StripPrefix=1
 
-        # File Service
         - id: file-service
-          uri: ${FILE_SERVICE_URL:http://localhost:8084}
+          uri: ${FILE_SERVICE_URL:http://file-service}
           predicates:
             - Path=/api/files/**
           filters:
             - StripPrefix=1
 
-        # Orders Service
         - id: order-service
-          uri: ${ORDER_SERVICE_URL:http://localhost:8085}
+          uri: ${ORDER_SERVICE_URL:http://order-service-deploy}
           predicates:
             - Path=/api/orders/**
           filters:
             - StripPrefix=1
 
-        # Stats Service
         - id: stats-service
-          uri: ${STATS_SERVICE_URL:http://localhost:8086}
+          uri: ${STATS_SERVICE_URL:http://stats-service}
           predicates:
             - Path=/api/stats/**
           filters:
@@ -81,14 +75,6 @@ management:
   endpoint:
     health:
       show-details: always
-  metrics:
-    enable:
-      system: false
-      process: false
-      jvm: true
-    export:
-      simple:
-        enabled: false
 
 logging:
   level:
