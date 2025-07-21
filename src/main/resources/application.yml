@@ -70,14 +70,16 @@ spring:
 management:
   endpoints:
     web:
+      # expose HEALTH, INFO *y* GATEWAY (incluye rutas)
       exposure:
         include: health,info,gateway
   endpoint:
-    health:
-      show-details: always
+    gateway:
+      enabled: true
 
 logging:
   level:
     org.springframework.cloud.gateway: DEBUG
     org.springframework.web.cors: DEBUG
     com.aec.gateway: DEBUG
+
