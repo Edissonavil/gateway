@@ -7,6 +7,7 @@ spring:
 
   cloud:
     gateway:
+      # filtros por defecto: mantienen CORS
       default-filters:
         - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
       globalcors:
@@ -70,10 +71,11 @@ spring:
 management:
   endpoints:
     web:
-      # expose HEALTH, INFO *y* GATEWAY (incluye rutas)
       exposure:
         include: health,info,gateway
   endpoint:
+    health:
+      show-details: always
     gateway:
       enabled: true
 
