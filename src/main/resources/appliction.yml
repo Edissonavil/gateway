@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: api-gateway
+    name: aec-gateway
   
   cloud:
     gateway:
@@ -81,9 +81,17 @@ management:
   endpoint:
     health:
       show-details: always
+  metrics:
+    enable:
+      system: false
+      process: false
+      jvm: true
+    export:
+      simple:
+        enabled: false
 
 logging:
   level:
     org.springframework.cloud.gateway: DEBUG
     org.springframework.web.cors: DEBUG
-    com.microservices.gateway: DEBUG
+    com.aec.gateway: DEBUG

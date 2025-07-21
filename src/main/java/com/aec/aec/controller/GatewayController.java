@@ -1,4 +1,4 @@
-package com.aec.aec.config.controller;
+package com.aec.aec.controller;
 
 
 import org.springframework.beans.factory.annotation.Value;
@@ -20,7 +20,7 @@ public class GatewayController {
 
     private final RouteLocator routeLocator;
 
-    @Value("${spring.application.name:api-gateway}")
+    @Value("${spring.application.name:aec-gateway}")
     private String applicationName;
 
     @Value("${spring.profiles.active:local}")
@@ -46,7 +46,7 @@ public class GatewayController {
         info.put("name", applicationName);
         info.put("version", "1.0.0");
         info.put("profile", activeProfile);
-        info.put("description", "API Gateway for Microservices Architecture");
+        info.put("description", "AEC API Gateway for Microservices Architecture");
         info.put("timestamp", LocalDateTime.now());
         return ResponseEntity.ok(info);
     }

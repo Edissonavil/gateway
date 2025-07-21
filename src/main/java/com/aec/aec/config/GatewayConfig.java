@@ -34,14 +34,13 @@ public class GatewayConfig {
         };
     }
 
-     @Bean
+    @Bean
     public GlobalFilter corsHeadersFilter() {
         return (exchange, chain) -> {
             exchange.getResponse().getHeaders().add(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
             exchange.getResponse().getHeaders().add(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, "GET,POST,PUT,DELETE,OPTIONS,PATCH");
             exchange.getResponse().getHeaders().add(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, "*");
             exchange.getResponse().getHeaders().add(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS, "true");
-
             return chain.filter(exchange);
         };
     }

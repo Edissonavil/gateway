@@ -14,7 +14,7 @@ RUN apk add --no-cache maven
 RUN mvn clean package -DskipTests
 
 # Etapa de ejecución
-FROM openjdk:17-jdk-alpine
+FROM openjdk:17-jre-alpine
 
 WORKDIR /app
 
@@ -38,10 +38,11 @@ EXPOSE 8080
 # Variables de entorno
 ENV SPRING_PROFILES_ACTIVE=railway
 ENV PORT=8080
+ENV JAVA_OPTS="-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:MaxRAMFraction=1 -XX:+UseG1GC"
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:${PORT}/gateway/health || exit 1
 
 # Comando de inicio
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]

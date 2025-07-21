@@ -5,7 +5,8 @@ dockerfilePath = "Dockerfile"
 [deploy]
 healthcheckPath = "/gateway/health"
 healthcheckTimeout = 100
-restartPolicyType = "never"
+restartPolicyType = "on-failure"
+restartPolicyMaxRetries = 10
 
 [env]
 SPRING_PROFILES_ACTIVE = "railway"
@@ -24,3 +25,6 @@ STATS_SERVICE_URL = "https://stats-service.railway.internal"
 LOGGING_LEVEL_ROOT = "INFO"
 LOGGING_LEVEL_GATEWAY = "INFO"
 MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE = "health,info,gateway"
+MANAGEMENT_METRICS_ENABLE_SYSTEM = "false"
+MANAGEMENT_METRICS_ENABLE_PROCESS = "false"
+MANAGEMENT_METRICS_ENABLE_JVM = "true"
