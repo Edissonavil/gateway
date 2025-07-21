@@ -1,81 +1,69 @@
-#
-#  Este archivo SOLO se carga cuando el perfil activo es `railway`
-#  (SPRING_PROFILES_ACTIVE=railway).  No usa lb://  — se enruta por
-#  URL directa (http://…:8080) que Railway resuelve internamente.
-#
+# src/main/resources/application-railway.yml
 spring:
   config:
     activate:
-      on-profile: railway                     # ← clave
+      on-profile: railway
 
   cloud:
     gateway:
-      routes:
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
 
-        # ────────────── USERS ──────────────
+      routes:
         - id: users-service
-          uri: ${USERS_SERVICE_URL}           # http://<uuid>.railway.internal:8080
+          uri: http://${USERS_SERVICE_URL}:${PORT}      # 87e0f0….railway.internal
           predicates:
             - Path=/api/users/**
           filters:
             - StripPrefix=1
 
-        # ────────────── AUTH ──────────────
         - id: auth-service
-          uri: ${AUTH_SERVICE_URL}
+          uri: http://${AUTH_SERVICE_URL}:${PORT}
           predicates:
             - Path=/api/auth/**
           filters:
             - StripPrefix=1
 
-        # ────────────── PRODUCTS ──────────────
         - id: prod-service
-          uri: ${PROD_SERVICE_URL}
+          uri: http://${PROD_SERVICE_URL}:${PORT}
           predicates:
             - Path=/api/products/**
           filters:
             - StripPrefix=1
 
-        # ────────────── FILES ──────────────
         - id: file-service
-          uri: ${FILE_SERVICE_URL}
+          uri: http://${FILE_SERVICE_URL}:${PORT}
           predicates:
             - Path=/api/files/**
           filters:
             - StripPrefix=1
 
-        # ────────────── ORDERS ──────────────
         - id: order-service
-          uri: ${ORDER_SERVICE_URL}
+          uri: http://${ORDER_SERVICE_URL}:${PORT}
           predicates:
             - Path=/api/orders/**
           filters:
             - StripPrefix=1
 
-        # ────────────── STATS ──────────────
         - id: stats-service
-          uri: ${STATS_SERVICE_URL}
+          uri: http://${STATS_SERVICE_URL}:${PORT}
           predicates:
             - Path=/api/stats/**
           filters:
             - StripPrefix=1
 
-        # ────────────── HEALTH LOCAL ──────────────
+        # Health del propio gateway
         - id: health
-          uri: http://localhost:8080/actuator/health
+          uri: http://localhost:${PORT}/actuator/health
           predicates:
             - Path=/health
 
-      #
-      #  CORS global.  (Si ya tienes CorsWebFilter en un @Bean,
-      #  puedes dejarlo; esto no hace daño.)
-      #
       globalcors:
         corsConfigurations:
           '[/**]':
-            allowedOriginPatterns: '*'
-            allowedMethods: [GET, POST, PUT, DELETE, OPTIONS, PATCH]
-            allowedHeaders: '*'
+            allowedOriginPatterns: "*"
+            allowedMethods: "*"
+            allowedHeaders: "*"
             allowCredentials: true
             maxAge: 3600
 
