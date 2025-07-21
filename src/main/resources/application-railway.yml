@@ -4,7 +4,7 @@ spring:
       routes:
         # Users Service - Railway Internal
         - id: users-service-railway
-          uri: https://users-service.railway.internal
+          uri: http://users-service # ¡CAMBIO: de https:// a http:// y simplificación del nombre!
           predicates:
             - Path=/api/users/**
           filters:
@@ -12,7 +12,7 @@ spring:
 
         # Auth Service - Railway Internal
         - id: auth-service-railway
-          uri: https://auth-service.railway.internal
+          uri: http://auth-service # ¡CAMBIO!
           predicates:
             - Path=/api/auth/**
           filters:
@@ -20,7 +20,7 @@ spring:
 
         # Products Service - Railway Internal
         - id: prod-service-railway
-          uri: https://prod-service.railway.internal
+          uri: http://prod-service # ¡CAMBIO!
           predicates:
             - Path=/api/products/**
           filters:
@@ -28,7 +28,7 @@ spring:
 
         # File Service - Railway Internal
         - id: file-service-railway
-          uri: https://file-service.railway.internal
+          uri: http://file-service # ¡CAMBIO!
           predicates:
             - Path=/api/files/**
           filters:
@@ -36,7 +36,7 @@ spring:
 
         # Orders Service - Railway Internal
         - id: order-service-railway
-          uri: https://order-service-deploy.railway.internal
+          uri: http://order-service-deploy # ¡CAMBIO!
           predicates:
             - Path=/api/orders/**
           filters:
@@ -44,7 +44,7 @@ spring:
 
         # Stats Service - Railway Internal
         - id: stats-service-railway
-          uri: https://stats-service.railway.internal
+          uri: http://stats-service # ¡CAMBIO!
           predicates:
             - Path=/api/stats/**
           filters:
@@ -53,7 +53,7 @@ spring:
       globalcors:
         corsConfigurations:
           '[/**]':
-            allowedOriginPatterns: 
+            allowedOriginPatterns:
               - "https://aecf.railway.internal"
               - "https://*.railway.app"
               - "*"
