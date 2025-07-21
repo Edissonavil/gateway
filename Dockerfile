@@ -38,7 +38,7 @@ EXPOSE 8080
 # Variables de entorno
 ENV SPRING_PROFILES_ACTIVE=railway
 ENV PORT=8080
-ENV JAVA_OPTS="-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:MaxRAMFraction=1 -XX:+UseG1GC"
+ENV JAVA_OPTS="-XX:+UseG1GC -XX:MaxRAMPercentage=75.0"
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
