@@ -1,5 +1,5 @@
 # src/main/resources/application-railway.yml
-# Asegúrate de que el perfil está activo en Railway (variable SPRING_PROFILES_ACTIVE=railway)
+
 spring:
   config:
     activate:
@@ -9,44 +9,42 @@ spring:
     gateway:
       routes:
         - id: users-service
-          uri: lb://users-service
+          uri: http://${USERS_SERVICE_URL}:8080 # <-- ¡CAMBIO CRUCIAL! Usamos HTTP directo con la variable de entorno y el puerto
           predicates:
             - Path=/api/users/**
           filters:
             - StripPrefix=1
-            # Ya no necesitas DedupeResponseHeader aquí ni en default-filters,
-            # tu CorsWebFilter global se encarga de los headers CORS.
 
         - id: auth-service
-          uri: lb://auth-service
+          uri: http://${AUTH_SERVICE_URL}:8080 # <-- ¡CAMBIO CRUCIAL!
           predicates:
             - Path=/api/auth/**
           filters:
             - StripPrefix=1
 
         - id: prod-service
-          uri: lb://prod-service
+          uri: http://${PROD_SERVICE_URL}:8080 # <-- ¡CAMBIO CRUCIAL!
           predicates:
             - Path=/api/products/**
           filters:
             - StripPrefix=1
 
         - id: file-service
-          uri: lb://file-service
+          uri: http://${FILE_SERVICE_URL}:8080 # <-- ¡CAMBIO CRUCIAL!
           predicates:
             - Path=/api/files/**
           filters:
             - StripPrefix=1
 
         - id: order-service
-          uri: lb://order-service-deploy # Asegúrate de que este es el nombre EXACTO de Railway
+          uri: http://${ORDER_SERVICE_URL}:8080 # <-- ¡CAMBIO CRUCIAL!
           predicates:
             - Path=/api/orders/**
           filters:
             - StripPrefix=1
 
         - id: stats-service
-          uri: lb://stats-service
+          uri: http://${STATS_SERVICE_URL}:8080 # <-- ¡CAMBIO CRUCIAL!
           predicates:
             - Path=/api/stats/**
           filters:
@@ -57,25 +55,4 @@ spring:
           predicates:
             - Path=/health
 
-    loadbalancer:
-      ribbon:
-        enabled: false # Esto asegura que no intente usar el cliente Ribbon obsoleto
-      clients:
-        users-service:
-          ribbon:
-            listOfServers: ${USERS_SERVICE_URL}:8080
-        auth-service:
-          ribbon:
-            listOfServers: ${AUTH_SERVICE_URL}:8080
-        prod-service:
-          ribbon:
-            listOfServers: ${PROD_SERVICE_URL}:8080
-        file-service:
-          ribbon:
-            listOfServers: ${FILE_SERVICE_URL}:8080
-        order-service-deploy:
-          ribbon:
-            listOfServers: ${ORDER_SERVICE_URL}:8080
-        stats-service:
-          ribbon:
-            listOfServers: ${STATS_SERVICE_URL}:8080
+   
