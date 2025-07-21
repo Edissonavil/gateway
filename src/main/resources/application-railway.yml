@@ -21,7 +21,7 @@ spring:
             - StripPrefix=1
 
         - id: prod-service
-          uri: http://prod-service-deploy.railway.internal:8080
+          uri: http://prod-service.railway.internal:8080
           predicates:
             - Path=/api/products/**
           filters:
