@@ -9,6 +9,7 @@ spring:
     gateway:
       default-filters:
         - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
+
       globalcors:
         corsConfigurations:
           '[/**]':
@@ -26,42 +27,42 @@ spring:
 
       routes:
         - id: users-service
-          uri: ${USERS_SERVICE_URL:http://localhost:8081}
+          uri: ${USERS_SERVICE_URL:http://users-service:8080}
           predicates:
             - Path=/api/users/**
           filters:
             - StripPrefix=1
 
         - id: auth-service
-          uri: ${AUTH_SERVICE_URL:http://localhost:8082}
+          uri: ${AUTH_SERVICE_URL:http://auth-service:8080}
           predicates:
             - Path=/api/auth/**
           filters:
             - StripPrefix=1
 
         - id: prod-service
-          uri: ${PROD_SERVICE_URL:http://localhost:8083}
+          uri: ${PROD_SERVICE_URL:http://prod-service:8080}
           predicates:
             - Path=/api/products/**
           filters:
             - StripPrefix=1
 
         - id: file-service
-          uri: ${FILE_SERVICE_URL:http://localhost:8084}
+          uri: ${FILE_SERVICE_URL:http://file-service:8080}
           predicates:
             - Path=/api/files/**
           filters:
             - StripPrefix=1
 
         - id: order-service
-          uri: ${ORDER_SERVICE_URL:http://localhost:8085}
+          uri: ${ORDER_SERVICE_URL:http://order-service-deploy:8080}
           predicates:
             - Path=/api/orders/**
           filters:
             - StripPrefix=1
 
         - id: stats-service
-          uri: ${STATS_SERVICE_URL:http://localhost:8086}
+          uri: ${STATS_SERVICE_URL:http://stats-service:8080}
           predicates:
             - Path=/api/stats/**
           filters:
