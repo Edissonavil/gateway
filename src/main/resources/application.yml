@@ -5,11 +5,16 @@ spring:
   application:
     name: aec-gateway
 
+  # desactiva el filtro WeightCalculatorWebFilter que está lanzando el stack trace
   cloud:
     gateway:
-      # filtros por defecto: mantienen CORS
+      filter:
+        weight:
+          enabled: false
+
       default-filters:
         - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
+
       globalcors:
         corsConfigurations:
           '[/**]':
@@ -84,4 +89,3 @@ logging:
     org.springframework.cloud.gateway: DEBUG
     org.springframework.web.cors: DEBUG
     com.aec.gateway: DEBUG
-
