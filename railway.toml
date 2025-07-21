@@ -1,12 +1,11 @@
 [build]
-builder = "dockerfile"
+builder = "dockerimage"
 dockerfilePath = "Dockerfile"
 
 [deploy]
 healthcheckPath = "/gateway/health"
 healthcheckTimeout = 100
-restartPolicyType = "on-failure"
-restartPolicyMaxRetries = 10
+restartPolicyType = "always"
 
 [env]
 SPRING_PROFILES_ACTIVE = "railway"
