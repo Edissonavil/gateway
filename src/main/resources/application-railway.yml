@@ -10,7 +10,7 @@ spring:
       routes:
         # Ruta para el servicio de usuarios
         - id: users-service
-          uri: http://${USERS_SERVICE_URL} # <--- ¡CAMBIO CLAVE! Añadido "http://"
+          uri: http://${USERS_SERVICE_URL}:8080 # <--- ¡CAMBIO CLAVE! Añadido "http://"
           predicates:
             - Path=/api/users/**
           filters:
@@ -18,7 +18,7 @@ spring:
 
         # Ruta para el servicio de autenticación
         - id: auth-service
-          uri: http://${AUTH_SERVICE_URL} # <--- ¡CAMBIO CLAVE! Añadido "http://"
+          uri: http://${AUTH_SERVICE_URL}:8080 # <--- ¡CAMBIO CLAVE! Añadido "http://"
           predicates:
             - Path=/api/auth/**
           filters:
@@ -26,7 +26,7 @@ spring:
 
         # Ruta para el servicio de productos
         - id: prod-service
-          uri: http://${PROD_SERVICE_URL} # <--- ¡CAMBIO CLAVE! Añadido "http://"
+          uri: http://${PROD_SERVICE_URL}:8080 # <--- ¡CAMBIO CLAVE! Añadido "http://"
           predicates:
             - Path=/api/products/**
           filters:
@@ -34,7 +34,7 @@ spring:
 
         # Ruta para el servicio de archivos
         - id: file-service
-          uri: http://${FILE_SERVICE_URL} # <--- ¡CAMBIO CLAVE! Añadido "http://"
+          uri: http://${FILE_SERVICE_URL}:8080 # <--- ¡CAMBIO CLAVE! Añadido "http://"
           predicates:
             - Path=/api/files/**
           filters:
@@ -42,7 +42,7 @@ spring:
 
         # Ruta para el servicio de pedidos
         - id: order-service
-          uri: http://${ORDER_SERVICE_URL} # <--- ¡CAMBIO CLAVE! Añadido "http://"
+          uri: http://${ORDER_SERVICE_URL}:8080 # <--- ¡CAMBIO CLAVE! Añadido "http://"
           predicates:
             - Path=/api/orders/**
           filters:
@@ -50,7 +50,7 @@ spring:
 
         # Ruta para el servicio de estadísticas
         - id: stats-service
-          uri: http://${STATS_SERVICE_URL} # <--- ¡CAMBIO CLAVE! Añadido "http://"
+          uri: http://${STATS_SERVICE_URL}:8080 # <--- ¡CAMBIO CLAVE! Añadido "http://"
           predicates:
             - Path=/api/stats/**
           filters:
