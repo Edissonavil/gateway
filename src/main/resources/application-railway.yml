@@ -1,48 +1,56 @@
+# application-railway.yml
+# Este perfil se activa cuando la aplicación se ejecuta en el entorno de Railway.
 spring:
   config:
     activate:
-      on-profile: railway
+      on-profile: railway # Activa este perfil para Railway
 
   cloud:
     gateway:
       routes:
+        # Ruta para el servicio de usuarios
         - id: users-service
-          uri: ${USERS_SERVICE_URL}
+          uri: http://${{users-service.RAILWAY_PRIVATE_DOMAIN}} # Usando la inyección directa de Railway
           predicates:
             - Path=/api/users/**
           filters:
             - StripPrefix=1
 
+        # Ruta para el servicio de autenticación
         - id: auth-service
-          uri: ${AUTH_SERVICE_URL}
+          uri: http://${{auth-service.RAILWAY_PRIVATE_DOMAIN}} # Usando la inyección directa de Railway
           predicates:
             - Path=/api/auth/**
           filters:
             - StripPrefix=1
 
+        # Ruta para el servicio de productos
         - id: prod-service
-          uri: ${PROD_SERVICE_URL}
+          uri: http://${{prod-service.RAILWAY_PRIVATE_DOMAIN}} # Usando la inyección directa de Railway
           predicates:
             - Path=/api/products/**
           filters:
             - StripPrefix=1
 
+        # Ruta para el servicio de archivos
         - id: file-service
-          uri: ${FILE_SERVICE_URL}
+          uri: http://${{file-service.RAILWAY_PRIVATE_DOMAIN}} # Usando la inyección directa de Railway
           predicates:
             - Path=/api/files/**
           filters:
             - StripPrefix=1
 
+        # Ruta para el servicio de pedidos
         - id: order-service
-          uri: ${ORDER_SERVICE_URL}
+          uri: http://${{order-service-deploy.RAILWAY_PRIVATE_DOMAIN}} # Usando la inyección directa de Railway
           predicates:
             - Path=/api/orders/**
           filters:
             - StripPrefix=1
 
+        # Ruta para el servicio de estadísticas
         - id: stats-service
-          uri: ${STATS_SERVICE_URL}
+          uri: http://${{stats-service.RAILWAY_PRIVATE_DOMAIN}} # Usando la inyección directa de Railway
           predicates:
             - Path=/api/stats/**
           filters:
@@ -64,9 +72,9 @@ spring:
             maxAge: 3600
 
 server:
-  port: ${PORT:8080}
+  port: ${PORT:8080} # Usa la variable de entorno PORT o por defecto 8080
 
 logging:
   level:
-    org.springframework.cloud.gateway: INFO
+    org.springframework.cloud.gateway: DEBUG # Cambiado a DEBUG para mayor visibilidad
     root: INFO
