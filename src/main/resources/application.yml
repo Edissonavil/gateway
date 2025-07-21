@@ -8,6 +8,10 @@ spring:
 
   cloud:
     gateway:
+      discovery:
+        locator:
+          enabled: true  
+          lower-case-service-id: true
 
       routes: [] # Deja routes vacío o elimínalo si no tienes rutas comunes.
 
