@@ -1,80 +1,89 @@
-# application-railway.yml
-# Este perfil se activa cuando la aplicación se ejecuta en el entorno de Railway.
+# src/main/resources/application-railway.yml
+
 spring:
   config:
     activate:
-      on-profile: railway # Activa este perfil para Railway
+      on-profile: railway
 
   cloud:
     gateway:
       routes:
-        # Ruta para el servicio de usuarios
         - id: users-service
-          uri: http://${USERS_SERVICE_URL}:8080 # <--- ¡CAMBIO CLAVE! Añadido "http://"
+          uri: lb://users-service # Mantenemos lb://
           predicates:
             - Path=/api/users/**
           filters:
             - StripPrefix=1
+            - DedupeResponseHeader=Access-Control-Allow-Origin, Access-Control-Allow-Credentials
 
-        # Ruta para el servicio de autenticación
         - id: auth-service
-          uri: http://${AUTH_SERVICE_URL}:8080 # <--- ¡CAMBIO CLAVE! Añadido "http://"
+          uri: lb://auth-service # Mantenemos lb://
           predicates:
             - Path=/api/auth/**
           filters:
             - StripPrefix=1
+            - DedupeResponseHeader=Access-Control-Allow-Origin, Access-Control-Allow-Credentials
 
-        # Ruta para el servicio de productos
         - id: prod-service
-          uri: http://${PROD_SERVICE_URL}:8080 # <--- ¡CAMBIO CLAVE! Añadido "http://"
+          uri: lb://prod-service # Mantenemos lb://
           predicates:
             - Path=/api/products/**
           filters:
             - StripPrefix=1
+            - DedupeResponseHeader=Access-Control-Allow-Origin, Access-Control-Allow-Credentials
 
-        # Ruta para el servicio de archivos
         - id: file-service
-          uri: http://${FILE_SERVICE_URL}:8080 # <--- ¡CAMBIO CLAVE! Añadido "http://"
+          uri: lb://file-service # Mantenemos lb://
           predicates:
             - Path=/api/files/**
           filters:
             - StripPrefix=1
+            - DedupeResponseHeader=Access-Control-Allow-Origin, Access-Control-Allow-Credentials
 
-        # Ruta para el servicio de pedidos
         - id: order-service
-          uri: http://${ORDER_SERVICE_URL}:8080 # <--- ¡CAMBIO CLAVE! Añadido "http://"
+          uri: lb://order-service-deploy # Mantenemos lb:// (usa el nombre exacto de Railway)
           predicates:
             - Path=/api/orders/**
           filters:
             - StripPrefix=1
+            - DedupeResponseHeader=Access-Control-Allow-Origin, Access-Control-Allow-Credentials
 
-        # Ruta para el servicio de estadísticas
         - id: stats-service
-          uri: http://${STATS_SERVICE_URL}:8080 # <--- ¡CAMBIO CLAVE! Añadido "http://"
+          uri: lb://stats-service # Mantenemos lb://
           predicates:
             - Path=/api/stats/**
           filters:
             - StripPrefix=1
+            - DedupeResponseHeader=Access-Control-Allow-Origin, Access-Control-Allow-Credentials
 
-      globalcors:
-        corsConfigurations:
-          '[/**]':
-            allowedOriginPatterns: "*"
-            allowedMethods:
-              - GET
-              - POST
-              - PUT
-              - DELETE
-              - OPTIONS
-              - PATCH
-            allowedHeaders: "*"
-            allowCredentials: true
-            maxAge: 3600
+        - id: health
+          uri: http://localhost:8080/actuator/health
+          predicates:
+            - Path=/health
 
-server:
-  port: ${PORT:8080}
-
-logging:
-  level:
-    org.springframework.cloud.gateway: TRACE
-    root: INFO
+    loadbalancer:
+      # Aunque Ribbon está deprecado, esta configuración sigue siendo la forma de inyectar IPs estáticas.
+      ribbon:
+        enabled: false # Asegurarse de que no usa el cliente de Ribbon si está presente (lo controla Spring Cloud LoadBalancer ahora)
+      
+      clients:
+        users-service:
+          ribbon:
+            # Aquí es donde usamos la variable de entorno y le añadimos el puerto
+            listOfServers: ${USERS_SERVICE_URL}:8080
+        auth-service:
+          ribbon:
+            listOfServers: ${AUTH_SERVICE_URL}:8080
+        prod-service:
+          ribbon:
+            listOfServers: ${PROD_SERVICE_URL}:8080
+        file-service:
+          ribbon:
+            listOfServers: ${FILE_SERVICE_URL}:8080
+        # Asegúrate de que este nombre (order-service-deploy) coincide con el nombre de tu servicio en Railway
+        order-service-deploy: 
+          ribbon:
+            listOfServers: ${ORDER_SERVICE_URL}:8080
+        stats-service:
+          ribbon:
+            listOfServers: ${STATS_SERVICE_URL}:8080
