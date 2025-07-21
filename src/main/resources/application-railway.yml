@@ -1,0 +1,77 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+        # Users Service - Railway Internal
+        - id: users-service-railway
+          uri: https://users-service.railway.internal
+          predicates:
+            - Path=/api/users/**
+          filters:
+            - StripPrefix=1
+
+        # Auth Service - Railway Internal
+        - id: auth-service-railway
+          uri: https://auth-service.railway.internal
+          predicates:
+            - Path=/api/auth/**
+          filters:
+            - StripPrefix=1
+
+        # Products Service - Railway Internal
+        - id: prod-service-railway
+          uri: https://prod-service.railway.internal
+          predicates:
+            - Path=/api/products/**
+          filters:
+            - StripPrefix=1
+
+        # File Service - Railway Internal
+        - id: file-service-railway
+          uri: https://file-service.railway.internal
+          predicates:
+            - Path=/api/files/**
+          filters:
+            - StripPrefix=1
+
+        # Orders Service - Railway Internal
+        - id: order-service-railway
+          uri: https://order-service-deploy.railway.internal
+          predicates:
+            - Path=/api/orders/**
+          filters:
+            - StripPrefix=1
+
+        # Stats Service - Railway Internal
+        - id: stats-service-railway
+          uri: https://stats-service.railway.internal
+          predicates:
+            - Path=/api/stats/**
+          filters:
+            - StripPrefix=1
+
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOriginPatterns: 
+              - "https://aecf.railway.internal"
+              - "https://*.railway.app"
+              - "*"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+              - PATCH
+            allowedHeaders: "*"
+            allowCredentials: true
+            maxAge: 3600
+
+server:
+  port: ${PORT:8080}
+
+logging:
+  level:
+    org.springframework.cloud.gateway: INFO
+    root: INFO

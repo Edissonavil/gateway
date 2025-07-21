@@ -1,0 +1,27 @@
+[build]
+builder = "dockerimage"
+dockerfilePath = "Dockerfile"
+
+[deploy]
+healthcheckPath = "/gateway/health"
+healthcheckTimeout = 100
+restartPolicyType = "on-failure"
+restartPolicyMaxRetries = 10
+
+[env]
+SPRING_PROFILES_ACTIVE = "railway"
+PORT = "8080"
+JAVA_OPTS = "-Xmx512m -Xms256m"
+
+# URLs de servicios internos (Railway)
+USERS_SERVICE_URL = "https://users-service.railway.internal"
+AUTH_SERVICE_URL = "https://auth-service.railway.internal"
+PROD_SERVICE_URL = "https://prod-service.railway.internal"
+FILE_SERVICE_URL = "https://file-service.railway.internal"
+ORDER_SERVICE_URL = "https://order-service-deploy.railway.internal"
+STATS_SERVICE_URL = "https://stats-service.railway.internal"
+
+# Configuración adicional
+LOGGING_LEVEL_ROOT = "INFO"
+LOGGING_LEVEL_GATEWAY = "INFO"
+MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE = "health,info,gateway"
