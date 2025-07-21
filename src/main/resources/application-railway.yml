@@ -1,5 +1,5 @@
 # src/main/resources/application-railway.yml
-
+# Asegúrate de que el perfil está activo en Railway (variable SPRING_PROFILES_ACTIVE=railway)
 spring:
   config:
     activate:
@@ -14,6 +14,8 @@ spring:
             - Path=/api/users/**
           filters:
             - StripPrefix=1
+            # Ya no necesitas DedupeResponseHeader aquí ni en default-filters,
+            # tu CorsWebFilter global se encarga de los headers CORS.
 
         - id: auth-service
           uri: lb://auth-service
@@ -37,7 +39,7 @@ spring:
             - StripPrefix=1
 
         - id: order-service
-          uri: lb://order-service-deploy
+          uri: lb://order-service-deploy # Asegúrate de que este es el nombre EXACTO de Railway
           predicates:
             - Path=/api/orders/**
           filters:
@@ -57,7 +59,7 @@ spring:
 
     loadbalancer:
       ribbon:
-        enabled: false
+        enabled: false # Esto asegura que no intente usar el cliente Ribbon obsoleto
       clients:
         users-service:
           ribbon:
