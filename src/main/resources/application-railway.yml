@@ -10,7 +10,7 @@ spring:
       routes:
         # Ruta para el servicio de usuarios
         - id: users-service
-          uri: http://${{users-service.RAILWAY_PRIVATE_DOMAIN}} # Usando la inyección directa de Railway
+          uri: ${USERS_SERVICE_URL} # <--- ¡Importante! Lee directamente la variable de entorno
           predicates:
             - Path=/api/users/**
           filters:
@@ -18,7 +18,7 @@ spring:
 
         # Ruta para el servicio de autenticación
         - id: auth-service
-          uri: http://${{auth-service.RAILWAY_PRIVATE_DOMAIN}} # Usando la inyección directa de Railway
+          uri: ${AUTH_SERVICE_URL} # <--- ¡Importante! Lee directamente la variable de entorno
           predicates:
             - Path=/api/auth/**
           filters:
@@ -26,7 +26,7 @@ spring:
 
         # Ruta para el servicio de productos
         - id: prod-service
-          uri: http://${{prod-service.RAILWAY_PRIVATE_DOMAIN}} # Usando la inyección directa de Railway
+          uri: ${PROD_SERVICE_URL} # <--- ¡Importante! Lee directamente la variable de entorno
           predicates:
             - Path=/api/products/**
           filters:
@@ -34,7 +34,7 @@ spring:
 
         # Ruta para el servicio de archivos
         - id: file-service
-          uri: http://${{file-service.RAILWAY_PRIVATE_DOMAIN}} # Usando la inyección directa de Railway
+          uri: ${FILE_SERVICE_URL} # <--- ¡Importante! Lee directamente la variable de entorno
           predicates:
             - Path=/api/files/**
           filters:
@@ -42,7 +42,7 @@ spring:
 
         # Ruta para el servicio de pedidos
         - id: order-service
-          uri: http://${{order-service-deploy.RAILWAY_PRIVATE_DOMAIN}} # Usando la inyección directa de Railway
+          uri: ${ORDER_SERVICE_URL} # <--- ¡Importante! Lee directamente la variable de entorno
           predicates:
             - Path=/api/orders/**
           filters:
@@ -50,7 +50,7 @@ spring:
 
         # Ruta para el servicio de estadísticas
         - id: stats-service
-          uri: http://${{stats-service.RAILWAY_PRIVATE_DOMAIN}} # Usando la inyección directa de Railway
+          uri: ${STATS_SERVICE_URL} # <--- ¡Importante! Lee directamente la variable de entorno
           predicates:
             - Path=/api/stats/**
           filters:
@@ -72,9 +72,9 @@ spring:
             maxAge: 3600
 
 server:
-  port: ${PORT:8080} # Usa la variable de entorno PORT o por defecto 8080
+  port: ${PORT:8080}
 
 logging:
   level:
-    org.springframework.cloud.gateway: DEBUG # Cambiado a DEBUG para mayor visibilidad
+    org.springframework.cloud.gateway: DEBUG
     root: INFO
