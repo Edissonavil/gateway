@@ -1,6 +1,6 @@
 package com.aec.aec.config;
 
-
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -27,10 +27,10 @@ public class GatewayConfig {
             // Log incoming requests
             String path = exchange.getRequest().getPath().toString();
             String method = exchange.getRequest().getMethod().toString();
-            
+
             System.out.println("Gateway routing request: " + method + " " + path);
             System.out.println("Active profile: " + activeProfile);
-            
+
             return chain.filter(exchange).then(Mono.fromRunnable(() -> {
                 // Log response status
                 int statusCode = exchange.getResponse().getStatusCode().value();
@@ -40,30 +40,27 @@ public class GatewayConfig {
     }
 
    @Bean
-    public CorsWebFilter corsWebFilter() {
-        CorsConfiguration config = new CorsConfiguration();
-        // 1) Origen concreto, no "*"
-        config.setAllowedOrigins(
-            List.of("https://aecf-production.up.railway.app")
-        );
-        // 2) Permitir credenciales
-        config.setAllowCredentials(true);
-        // 3) Todos los métodos y headers
-        config.addAllowedMethod("*");
-        config.addAllowedHeader("*");
+  public CorsWebFilter corsWebFilter() {
+    CorsConfiguration config = new CorsConfiguration();
+    config.setAllowedOrigins(List.of(
+      "https://aecf-production.up.railway.app"
+      
+    ));
+    config.setAllowCredentials(true);
+    config.addAllowedMethod("*");
+    config.addAllowedHeader("*");
 
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", config);
-
-        return new CorsWebFilter(source);
-    }
+    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    source.registerCorsConfiguration("/**", config);
+    return new CorsWebFilter(source);
+  }
 
     @Bean
     public GlobalFilter requestLoggingFilter() {
         return (exchange, chain) -> {
             String requestId = java.util.UUID.randomUUID().toString().substring(0, 8);
             exchange.getAttributes().put("requestId", requestId);
-            
+
             return chain.filter(exchange);
         };
     }
