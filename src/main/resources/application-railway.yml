@@ -12,11 +12,13 @@ spring:
           predicates:
             - Path=/api/files/**
           filters:
-            - RemoveRequestHeader=Cookie
-            - SetResponseHeader=Access-Control-Allow-Origin, *
-            - SetResponseHeader=Access-Control-Allow-Methods, GET, OPTIONS
-            - SetResponseHeader=Access-Control-Expose-Headers, Content-Disposition
-            - DedupeResponseHeader=Access-Control-Allow-Credentials, RETAIN_FIRST
+          - RemoveRequestHeader=Authorization
+          - RemoveRequestHeader=Cookie
+          - RemoveResponseHeader=WWW-Authenticate     # <— quita el desafío Bearer
+          - SetResponseHeader=Access-Control-Allow-Origin, *
+          - SetResponseHeader=Access-Control-Allow-Methods, GET, OPTIONS
+          - SetResponseHeader=Access-Control-Expose-Headers, Content-Disposition
+          - DedupeResponseHeader=Access-Control-Allow-Credentials, RETAIN_FIRST
 
         # Servicios adicionales (configuración original)
         - id: users-service
