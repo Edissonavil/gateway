@@ -6,32 +6,19 @@ spring:
   cloud:
     gateway:
       routes:
-        - id: file-service-products
+        # Configuración unificada para archivos
+        - id: file-service
           uri: http://${FILE_SERVICE_URL:file-service.railway.internal}:8084
           predicates:
-            - Path=/api/files/products/{id}/{filename} 
+            - Path=/api/files/**
           filters:
-            - RewritePath=/api/files/products/(?<id>\d+)/(?<filename>.*), /api/files/${id}/${filename}
-            - StripPrefix=0
-            - RemoveRequestHeader=Authorization  
+            - RewritePath=/api/files/(?<segment>.*), /files/$\{segment}
+            - RemoveRequestHeader=Authorization
+            - RemoveRequestHeader=Cookie
+            - SetResponseHeader=Access-Control-Allow-Origin, *
+            - SetResponseHeader=Access-Control-Allow-Methods, GET
 
-        - id: file-service-receipts
-          uri: http://${FILE_SERVICE_URL:file-service.railway.internal}:8084
-          predicates:
-            - Path=/api/files/receipts/{id}/{filename} 
-          filters:
-            - RewritePath=/api/files/receipts/(?<id>\d+)/(?<filename>.*), /api/files/${id}/${filename}
-            - StripPrefix=0
-            - RemoveRequestHeader=Authorization 
-
-        - id: file-service-generic
-          uri: http://${FILE_SERVICE_URL:file-service.railway.internal}:8084
-          predicates:
-            - Path=/api/files/{id}/{filename} 
-          filters:
-            - StripPrefix=1
-            - RemoveRequestHeader=Authorization 
-
+        # Servicios adicionales (configuración original)
         - id: users-service
           uri: http://${USERS_SERVICE_URL:users-service.railway.internal}:8081
           predicates:
