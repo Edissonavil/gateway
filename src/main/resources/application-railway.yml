@@ -73,6 +73,13 @@ management:
     health:
       show-details: always
 
+cors:
+  allowed-origins: 
+    - "https://aecf-production.up.railway.app"
+  allowed-methods: GET,POST,PUT,DELETE,OPTIONS,PATCH
+  allowed-headers: "*"
+  allow-credentials: true
+
 logging:
   level:
     org.springframework.cloud.gateway: TRACE
