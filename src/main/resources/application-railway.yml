@@ -19,6 +19,8 @@ spring:
             - Path=/api/auth/**
           filters:
             - StripPrefix=0
+            - PreserveBodyFilter 
+            - RemoveRequestHeader=Cookie 
             - name: RewritePath
               args:
                 regexp: /api/auth/(?<segment>.*)

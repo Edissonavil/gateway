@@ -1,13 +1,17 @@
 package com.aec.aec.config;
 
+import java.nio.charset.StandardCharsets;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.Ordered;
+import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.core.io.buffer.DataBufferUtils;
 import org.springframework.http.HttpHeaders;
-import org.springframework.web.server.ServerWebExchange;
-import reactor.core.publisher.Mono;
+import org.springframework.http.server.reactive.ServerHttpRequestDecorator;
+
+import reactor.core.publisher.Flux;
 
 @Configuration
 public class GatewayConfig {
@@ -16,20 +20,28 @@ public class GatewayConfig {
     private String activeProfile;
 
     @Bean
-    public GlobalFilter customGlobalFilter() {
+    public GlobalFilter preserveBodyFilter() {
         return (exchange, chain) -> {
-            // Log incoming requests
-            String path = exchange.getRequest().getPath().toString();
-            String method = exchange.getRequest().getMethod().toString();
+            // Conserva el cuerpo original
+            return DataBufferUtils.join(exchange.getRequest().getBody())
+                    .flatMap(dataBuffer -> {
+                        byte[] bytes = new byte[dataBuffer.readableByteCount()];
+                        dataBuffer.read(bytes);
+                        DataBufferUtils.release(dataBuffer);
+                        String body = new String(bytes, StandardCharsets.UTF_8);
+                        System.out.println("Request body preserved: " + body); // Log para debug
 
-            System.out.println("Gateway routing request: " + method + " " + path);
-            System.out.println("Active profile: " + activeProfile);
+                        // Crea una nueva request con el cuerpo preservado
+                        ServerHttpRequestDecorator decoratedRequest = new ServerHttpRequestDecorator(
+                                exchange.getRequest()) {
+                            @Override
+                            public Flux<DataBuffer> getBody() {
+                                return Flux.just(exchange.getResponse().bufferFactory().wrap(bytes));
+                            }
+                        };
 
-            return chain.filter(exchange).then(Mono.fromRunnable(() -> {
-                // Log response status
-                int statusCode = exchange.getResponse().getStatusCode().value();
-                System.out.println("Response status: " + statusCode + " for " + path);
-            }));
+                        return chain.filter(exchange.mutate().request(decoratedRequest).build());
+                    });
         };
     }
 
