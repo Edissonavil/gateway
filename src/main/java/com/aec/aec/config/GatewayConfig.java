@@ -18,7 +18,7 @@ public class GatewayConfig {
 
     @Value("${spring.profiles.active:local}")
     private String activeProfile;
-
+ /* 
     @Bean
     public GlobalFilter preserveBodyFilter() {
         return (exchange, chain) -> {
@@ -44,7 +44,7 @@ public class GatewayConfig {
                     });
         };
     }
-
+*/
     @Bean
     public GlobalFilter corsHeadersFilter() {
         return (exchange, chain) -> {
@@ -56,7 +56,7 @@ public class GatewayConfig {
             return chain.filter(exchange);
         };
     }
-
+/* 
     @Bean
     public GlobalFilter requestLoggingFilter() {
         return (exchange, chain) -> {
@@ -66,7 +66,7 @@ public class GatewayConfig {
             return chain.filter(exchange);
         };
     }
-
+*/
     @Bean
     public GlobalFilter loggingFilter() {
         return (exchange, chain) -> {
