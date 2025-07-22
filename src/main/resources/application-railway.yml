@@ -1,3 +1,4 @@
+
 spring:
   config:
     activate:
@@ -7,31 +8,31 @@ spring:
     gateway:
       routes:
         - id: users-service
-          uri: https://${{users-service.RAILWAY_PRIVATE_DOMAIN}}
+          uri: https://${{USERS_SERVICE_URL}}
           predicates:
             - Path=/api/users/**
 
         - id: auth-service
-          uri: https://${{auth-service.RAILWAY_PRIVATE_DOMAIN}}
+          uri: https://${{AUTH_SERVICE_URL}}
           predicates:
             - Path=/api/auth/**
 
         - id: prod-service
-          uri: https://${{prod-service.RAILWAY_PRIVATE_DOMAIN}}
+          uri: https://${{PROD_SERVICE_URL}}
           predicates:
             - Path=/api/products/**
 
         - id: file-service
-          uri: https://${{file-service.RAILWAY_PRIVATE_DOMAIN}}
+          uri: https://${{FILE_SERVICE_URL}}
           predicates:
             - Path=/api/files/**
 
-        - id: order-service-deploy
-          uri: https://${{order-service-deploy.RAILWAY_PRIVATE_DOMAIN}}
+        - id: order-service
+          uri: https://${{ORDER_SERVICE_URL}}
           predicates:
             - Path=/api/orders/**
 
         - id: stats-service
-          uri: https://${{stats-service.RAILWAY_PRIVATE_DOMAIN}}
+          uri: https://${{STATS_SERVICE_URL}}
           predicates:
             - Path=/api/stats/**
