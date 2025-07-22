@@ -6,43 +6,18 @@ spring:
   cloud:
     gateway:
       routes:
-        # 📁 SERVICIO DE ARCHIVOS - CONFIGURACIÓN MEJORADA
         - id: file-service
           uri: http://${FILE_SERVICE_URL:file-service.railway.internal}:8084
           predicates:
             - Path=/api/files/**
           filters:
-            # 🧹 LIMPIA HEADERS DE AUTENTICACIÓN PARA ARCHIVOS PÚBLICOS
-            - name: RemoveRequestHeader
-              args:
-                name: Authorization
-            - name: RemoveRequestHeader  
-              args:
-                name: Cookie
-            # 🛡️ QUITA DESAFÍOS DE AUTENTICACIÓN
-            - name: RemoveResponseHeader
-              args:
-                name: WWW-Authenticate
-            # 🌐 HEADERS CORS PARA ARCHIVOS
-            - name: SetResponseHeader
-              args:
-                name: Access-Control-Allow-Origin
-                value: "*"
-            - name: SetResponseHeader
-              args:
-                name: Access-Control-Allow-Methods  
-                value: "GET, POST, OPTIONS"
-            - name: SetResponseHeader
-              args:
-                name: Access-Control-Expose-Headers
-                value: "Content-Disposition, Content-Type"
-            # 📋 ELIMINA DUPLICADOS
-            - name: DedupeResponseHeader
-              args:
-                name: Access-Control-Allow-Credentials
-                strategy: RETAIN_FIRST
+            - RemoveResponseHeader=WWW-Authenticate
+            - SetResponseHeader=Access-Control-Allow-Origin, *
+            - SetResponseHeader=Access-Control-Allow-Methods, GET, POST, OPTIONS
+            - SetResponseHeader=Access-Control-Allow-Headers, Content-Type, Authorization
+            - SetResponseHeader=Access-Control-Expose-Headers, Content-Disposition
+            - DedupeResponseHeader=Access-Control-Allow-Credentials, RETAIN_FIRST
 
-        # 👥 OTROS SERVICIOS (sin cambios)
         - id: users-service
           uri: http://${USERS_SERVICE_URL:users-service.railway.internal}:8081
           predicates:
@@ -86,22 +61,13 @@ spring:
           filters:
             - SetResponseHeader=Cache-Control, no-cache
 
-      # ⚙️ CONFIGURACIÓN GLOBAL
       discovery:
         locator:
           enabled: false
       httpclient:
         connect-timeout: 10000
         response-timeout: 60s
-      # 🛠️ CONFIGURACIÓN DE FILTROS GLOBALES
-      default-filters:
-        # Permitir CORS preflight
-        - name: DedupeResponseHeader
-          args:
-            name: Access-Control-Allow-Origin
-            strategy: RETAIN_FIRST
 
-# 📊 MONITOREO
 management:
   endpoints:
     web:
@@ -114,11 +80,9 @@ management:
       probes:
         enabled: true
 
-# 📝 LOGGING DETALLADO
 logging:
   level:
     org.springframework.cloud.gateway: DEBUG
-    org.springframework.web.server: DEBUG
-    org.springframework.security: DEBUG  # Para debug de seguridad
-    reactor.netty.http.client: DEBUG
+    org.springframework.web: DEBUG
+    reactor.netty: DEBUG
     root: INFO
