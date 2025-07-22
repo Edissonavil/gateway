@@ -1,4 +1,3 @@
-
 spring:
   config:
     activate:
@@ -8,31 +7,31 @@ spring:
     gateway:
       routes:
         - id: users-service
-          uri: ${{USERS_SERVICE_URL}}
+          uri: ${USERS_SERVICE_URL}
           predicates:
             - Path=/api/users/**
 
         - id: auth-service
-          uri: ${{AUTH_SERVICE_URL}}
+          uri: ${AUTH_SERVICE_URL}
           predicates:
             - Path=/api/auth/**
 
         - id: prod-service
-          uri: ${{PROD_SERVICE_URL}}
+          uri: ${PROD_SERVICE_URL}
           predicates:
             - Path=/api/products/**
 
         - id: file-service
-          uri: ${{FILE_SERVICE_URL}}
+          uri: ${FILE_SERVICE_URL}
           predicates:
             - Path=/api/files/**
 
         - id: order-service
-          uri: ${{ORDER_SERVICE_URL}}
+          uri: ${ORDER_SERVICE_URL}
           predicates:
             - Path=/api/orders/**
 
         - id: stats-service
-          uri: ${{STATS_SERVICE_URL}}
+          uri: ${STATS_SERVICE_URL}
           predicates:
             - Path=/api/stats/**
