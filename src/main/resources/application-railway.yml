@@ -32,15 +32,25 @@ spring:
           filters:
             - StripPrefix=0
 
-        - id: file-service
+        - id: file-service-products # Nueva ID para productos
           uri: http://${FILE_SERVICE_URL:file-service.railway.internal}:8084
           predicates:
-            - Path=/api/files/**
+            - Path=/api/files/products/** 
           filters:
             - name: RewritePath
               args:
-                regexp: /api/files/(?<segment>.*) 
-                replacement: /uploads/$\{segment} 
+                regexp: /api/files/products/(?<id>\d+)/(?<filename>.*)
+                replacement: /uploads/productos/$\{id}/$\{filename}
+                
+        - id: file-service-receipts 
+          uri: http://${FILE_SERVICE_URL:file-service.railway.internal}:8084
+          predicates:
+            - Path=/api/files/receipts/** 
+          filters:
+            - name: RewritePath
+              args:
+                regexp: /api/files/receipts/(?<id>\d+)/(?<filename>.*)
+                replacement: /uploads/comprobantes/$\{id}/$\{filename}
 
         - id: order-service
           uri: http://${ORDER_SERVICE_URL:order-service-deploy.railway.internal}:8085
