@@ -53,6 +53,11 @@ spring:
           filters:
             - StripPrefix=0
 
+        - id: aecf
+          uri: http://aecf.railway.internal:80
+          predicates:
+            - Path=/, /index.html, /static/**, /*.js, /*.css, /*.json, /*.png # Rutas para servir el frontend
+
       # Configuración de descubrimiento de servicios para Railway
       discovery:
         locator:
