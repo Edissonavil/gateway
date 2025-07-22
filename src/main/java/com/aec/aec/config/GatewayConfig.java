@@ -1,73 +1,56 @@
 package com.aec.aec.config;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.buffer.DataBuffer;
-import org.springframework.core.io.buffer.DataBufferUtils;
+import org.springframework.core.Ordered;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.server.reactive.ServerHttpRequestDecorator;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.reactive.CorsWebFilter;
-import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
+import org.springframework.web.server.ServerWebExchange;
+import reactor.core.publisher.Mono;
 
-import reactor.core.publisher.Flux;
 @Configuration
 public class GatewayConfig {
 
-    @Value("${cors.allowed-origins}")
-    private String[] allowedOrigins;
+    @Value("${spring.profiles.active:local}")
+    private String activeProfile;
 
     @Bean
-    public CorsWebFilter corsWebFilter() {
-        CorsConfiguration corsConfig = new CorsConfiguration();
-        corsConfig.addAllowedOrigin("https://aecf-production.up.railway.app");
-        corsConfig.addAllowedMethod("*");
-        corsConfig.addAllowedHeader("*");
-        corsConfig.setAllowCredentials(true);
-        corsConfig.setMaxAge(3600L);
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", corsConfig);
-
-        return new CorsWebFilter(source);
-    }
-
-    @Bean
-    public GlobalFilter preserveBodyFilter() {
+    public GlobalFilter customGlobalFilter() {
         return (exchange, chain) -> {
-            return DataBufferUtils.join(exchange.getRequest().getBody())
-                .flatMap(dataBuffer -> {
-                    byte[] bytes = new byte[dataBuffer.readableByteCount()];
-                    dataBuffer.read(bytes);
-                    DataBufferUtils.release(dataBuffer);
-                    String body = new String(bytes, StandardCharsets.UTF_8);
-                    System.out.println("Cuerpo de la solicitud conservado: " + body);
-
-                    ServerHttpRequestDecorator decoratedRequest = new ServerHttpRequestDecorator(
-                        exchange.getRequest()) {
-                        @Override
-                        public Flux<DataBuffer> getBody() {
-                            return Flux.just(exchange.getResponse().bufferFactory().wrap(bytes));
-                        }
-                    };
-
-                    return chain.filter(exchange.mutate().request(decoratedRequest).build());
-                });
+            // Log incoming requests
+            String path = exchange.getRequest().getPath().toString();
+            String method = exchange.getRequest().getMethod().toString();
+            
+            System.out.println("Gateway routing request: " + method + " " + path);
+            System.out.println("Active profile: " + activeProfile);
+            
+            return chain.filter(exchange).then(Mono.fromRunnable(() -> {
+                // Log response status
+                int statusCode = exchange.getResponse().getStatusCode().value();
+                System.out.println("Response status: " + statusCode + " for " + path);
+            }));
         };
     }
 
+    @Bean
+    public GlobalFilter corsHeadersFilter() {
+        return (exchange, chain) -> {
+            exchange.getResponse().getHeaders().add(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
+            exchange.getResponse().getHeaders().add(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, "GET,POST,PUT,DELETE,OPTIONS,PATCH");
+            exchange.getResponse().getHeaders().add(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, "*");
+            exchange.getResponse().getHeaders().add(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS, "true");
+            return chain.filter(exchange);
+        };
+    }
 
     @Bean
     public GlobalFilter requestLoggingFilter() {
         return (exchange, chain) -> {
-            String requestId = UUID.randomUUID().toString().substring(0, 8);
+            String requestId = java.util.UUID.randomUUID().toString().substring(0, 8);
             exchange.getAttributes().put("requestId", requestId);
+            
             return chain.filter(exchange);
         };
     }
