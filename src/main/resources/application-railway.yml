@@ -6,34 +6,28 @@ spring:
   cloud:
     gateway:
       routes:
-        - id: file-service
-          uri: http://${FILE_SERVICE_URL:file-service.railway.internal}:8084
-          predicates:
-            - Path=/api/files/** 
-          filters:
-            - StripPrefix=0
-
         - id: file-service-products
           uri: http://${FILE_SERVICE_URL:file-service.railway.internal}:8084
           predicates:
-            - Path=/api/files/products/** 
+            - Path=/api/files/products/{id}/{filename} 
           filters:
+            - RewritePath=/api/files/products/(?<id>\d+)/(?<filename>.*), /api/files/${id}/${filename}
             - StripPrefix=0
-            - name: RewritePath
-              args:
-                regexp: /api/files/products/(?<id>\d+)/(?<filename>.*)
-                replacement: /api/files/productos/${id}/${filename}
 
         - id: file-service-receipts
           uri: http://${FILE_SERVICE_URL:file-service.railway.internal}:8084
           predicates:
-            - Path=/api/files/receipts/** 
+            - Path=/api/files/receipts/{id}/{filename} 
           filters:
+            - RewritePath=/api/files/receipts/(?<id>\d+)/(?<filename>.*), /api/files/${id}/${filename}
             - StripPrefix=0
-            - name: RewritePath
-              args:
-                regexp: /api/files/receipts/(?<id>\d+)/(?<filename>.*)
-                replacement: /api/files/comprobantes/${id}/${filename}
+
+        - id: file-service-generic
+          uri: http://${FILE_SERVICE_URL:file-service.railway.internal}:8084
+          predicates:
+            - Path=/api/files/{id}/{filename} 
+          filters:
+            - StripPrefix=1  
 
         - id: users-service
           uri: http://${USERS_SERVICE_URL:users-service.railway.internal}:8081
@@ -78,7 +72,7 @@ spring:
         - id: aecf
           uri: http://aecf.railway.internal:80
           predicates:
-            - Path=/, /index.html, /static/**, /*.js, /*.css, /*.json, /*.png # Rutas para servir el frontend
+            - Path=/, /index.html, /static/**, /*.js, /*.css, /*.json, /*.png
 
       discovery:
         locator:
