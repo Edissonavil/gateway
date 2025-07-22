@@ -4,8 +4,11 @@ package com.aec.aec.controller;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.route.Route;
 import org.springframework.cloud.gateway.route.RouteLocator;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.reactive.function.client.WebClient;
+
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -89,4 +92,37 @@ public class GatewayController {
         response.put("timestamp", LocalDateTime.now());
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/test-connectivity")
+public ResponseEntity<Map<String, Object>> testConnectivity() {
+    Map<String, Object> response = new HashMap<>();
+    response.put("gateway", "OK");
+    response.put("timestamp", LocalDateTime.now());
+    
+    // Test conexión a users-service
+    try {
+        WebClient.create().get()
+            .uri("http://users-service.railway.internal:8081/api/users/health")
+            .retrieve()
+            .toBodilessEntity()
+            .block();
+        response.put("users-service", "OK");
+    } catch (Exception e) {
+        response.put("users-service", "FAIL: " + e.getMessage());
+    }
+    
+    return ResponseEntity.ok(response);
+}
+@RestController
+@RequestMapping("/fallback")
+public class FallbackController {
+    
+    @GetMapping("/users")
+    public ResponseEntity<Map<String, Object>> usersFallback() {
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", "SERVICE_UNAVAILABLE");
+        response.put("message", "Users service is temporarily unavailable");
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(response);
+    }
+}
 }

@@ -7,42 +7,42 @@ spring:
     gateway:
       routes:
         - id: users-service
-          uri: http://${USERS_SERVICE_URL:users-service.railway.internal:8081}
+          uri: http://${USERS_SERVICE_URL:users-service.railway.internal}:8081
           predicates:
             - Path=/api/users/**
           filters:
             - StripPrefix=0
 
         - id: auth-service  
-          uri: http://${AUTH_SERVICE_URL:auth-service.railway.internal:8082}
+          uri: http://${AUTH_SERVICE_URL:auth-service.railway.internal}:8082
           predicates:
             - Path=/api/auth/**
           filters:
             - StripPrefix=0
 
         - id: prod-service
-          uri: http://${PROD_SERVICE_URL:prod-service.railway.internal:8083}
+          uri: http://${PROD_SERVICE_URL:prod-service.railway.internal}:8083
           predicates:
             - Path=/api/products/**
           filters:
             - StripPrefix=0
 
         - id: file-service
-          uri: http://${FILE_SERVICE_URL:file-service.railway.internal:8084}
+          uri: http://${FILE_SERVICE_URL:file-service.railway.internal}:8084
           predicates:
             - Path=/api/files/**
           filters:
             - StripPrefix=0
 
         - id: order-service
-          uri: http://${ORDER_SERVICE_URL:order-service-deploy.railway.internal:8085}
+          uri: http://${ORDER_SERVICE_URL:order-service-deploy.railway.internal}:8085
           predicates:
             - Path=/api/orders/**
           filters:
             - StripPrefix=0
 
         - id: stats-service
-          uri: http://${STATS_SERVICE_URL:stats-service.railway.internal:8086}
+          uri: http://${STATS_SERVICE_URL:stats-service.railway.internal}:8086
           predicates:
             - Path=/api/stats/**
           filters:
