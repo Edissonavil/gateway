@@ -13,6 +13,7 @@ spring:
           filters:
             - RewritePath=/api/files/products/(?<id>\d+)/(?<filename>.*), /api/files/${id}/${filename}
             - StripPrefix=0
+            - RemoveRequestHeader=Authorization  
 
         - id: file-service-receipts
           uri: http://${FILE_SERVICE_URL:file-service.railway.internal}:8084
@@ -21,13 +22,15 @@ spring:
           filters:
             - RewritePath=/api/files/receipts/(?<id>\d+)/(?<filename>.*), /api/files/${id}/${filename}
             - StripPrefix=0
+            - RemoveRequestHeader=Authorization 
 
         - id: file-service-generic
           uri: http://${FILE_SERVICE_URL:file-service.railway.internal}:8084
           predicates:
             - Path=/api/files/{id}/{filename} 
           filters:
-            - StripPrefix=1  
+            - StripPrefix=1
+            - RemoveRequestHeader=Authorization 
 
         - id: users-service
           uri: http://${USERS_SERVICE_URL:users-service.railway.internal}:8081
