@@ -6,19 +6,31 @@ spring:
   cloud:
     gateway:
       routes:
-        # Configuración unificada para archivos
+        # Configuración principal para archivos
         - id: file-service
           uri: http://${FILE_SERVICE_URL:file-service.railway.internal}:8084
           predicates:
-            - Path=/api/files/**
+            - Path=/api/files/{id}/{filename}
           filters:
-            - RewritePath=/api/files/(?<segment>.*), /files/$\{segment}
+            - RewritePath=/api/files/(?<id>\d+)/(?<filename>.*), /api/files/$\{id}/$\{filename}
             - RemoveRequestHeader=Authorization
             - RemoveRequestHeader=Cookie
             - SetResponseHeader=Access-Control-Allow-Origin, *
-            - SetResponseHeader=Access-Control-Allow-Methods, GET
+            - SetResponseHeader=Access-Control-Allow-Methods, GET, OPTIONS
+            - SetResponseHeader=Access-Control-Allow-Headers, *
+            - DedupeResponseHeader=Access-Control-Allow-Credentials, RETAIN_FIRST
 
-        # Servicios adicionales (configuración original)
+        # Ruta alternativa para compatibilidad
+        - id: file-service-legacy
+          uri: http://${FILE_SERVICE_URL:file-service.railway.internal}:8084
+          predicates:
+            - Path=/files/{id}/{filename}
+          filters:
+            - SetPath=/api/files/{id}/{filename}
+            - RemoveRequestHeader=Authorization
+            - RemoveRequestHeader=Cookie
+
+        # Servicio de usuarios
         - id: users-service
           uri: http://${USERS_SERVICE_URL:users-service.railway.internal}:8081
           predicates:
@@ -26,18 +38,17 @@ spring:
           filters:
             - StripPrefix=0
 
+        # Servicio de autenticación
         - id: auth-service  
           uri: http://${AUTH_SERVICE_URL:auth-service.railway.internal}:8082
           predicates:
             - Path=/api/auth/**
           filters:
             - StripPrefix=0
-            - RemoveRequestHeader=Cookie 
-            - name: RewritePath
-              args:
-                regexp: /api/auth/(?<segment>.*)
-                replacement: /api/auth/$\{segment}
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/api/auth/(?<segment>.*), /api/auth/$\{segment}
 
+        # Servicio de productos
         - id: prod-service
           uri: http://${PROD_SERVICE_URL:prod-service.railway.internal}:8083
           predicates:
@@ -45,6 +56,7 @@ spring:
           filters:
             - StripPrefix=0
 
+        # Servicio de órdenes
         - id: order-service
           uri: http://${ORDER_SERVICE_URL:order-service-deploy.railway.internal}:8085
           predicates:
@@ -52,34 +64,69 @@ spring:
           filters:
             - StripPrefix=0
 
+        # Servicio de estadísticas
         - id: stats-service
           uri: http://${STATS_SERVICE_URL:stats-service.railway.internal}:8086
           predicates:
             - Path=/api/stats/**
           filters:
-            - StripPrefix=2
+            - StripPrefix=0
 
-        - id: aecf
+        # Frontend
+        - id: aecf-frontend
           uri: http://aecf.railway.internal:80
           predicates:
             - Path=/, /index.html, /static/**, /*.js, /*.css, /*.json, /*.png
+          filters:
+            - SetResponseHeader=Cache-Control, no-cache
 
+      # Configuración adicional
       discovery:
         locator:
           enabled: false
+      httpclient:
+        connect-timeout: 10000
+        response-timeout: 30s
 
+    # Configuración de seguridad para el gateway
+    security:
+      oauth2:
+        resourceserver:
+          jwt:
+            issuer-uri: ${JWT_ISSUER_URI}
+            jwk-set-uri: ${JWT_JWKS_URI}
+
+# Configuración de gestión
 management:
   endpoints:
     web:
       exposure:
-        include: health,info,gateway
+        include: health, info, metrics, gateway
+      base-path: /management
   endpoint:
     health:
       show-details: always
+      probes:
+        enabled: true
+    metrics:
+      enabled: true
 
+# Configuración de logging
 logging:
   level:
-    org.springframework.cloud.gateway: TRACE
-    org.springframework.web.cors: DEBUG
-    com.aec.gateway: INFO
+    org.springframework.cloud.gateway: DEBUG
+    org.springframework.web: DEBUG
+    org.springframework.security: DEBUG
+    com.aec.gateway: TRACE
+    reactor.netty: DEBUG
     root: INFO
+  file:
+    name: gateway.log
+    path: /var/log
+
+# Configuración del servidor
+server:
+  forward-headers-strategy: framework
+  error:
+    include-message: always
+    include-binding-errors: always
