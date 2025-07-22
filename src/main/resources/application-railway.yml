@@ -7,43 +7,31 @@ spring:
     gateway:
       routes:
         - id: users-service
-          uri: http://users-service.railway.internal:8080
+          uri: https://${{users-service.RAILWAY_PRIVATE_DOMAIN}}
           predicates:
             - Path=/api/users/**
-          filters:
-            - StripPrefix=1
 
         - id: auth-service
-          uri: http://auth-service.railway.internal:8080
+          uri: https://${{auth-service.RAILWAY_PRIVATE_DOMAIN}}
           predicates:
             - Path=/api/auth/**
-          filters:
-            - StripPrefix=1
 
         - id: prod-service
-          uri: http://prod-service.railway.internal:8080
+          uri: https://${{prod-service.RAILWAY_PRIVATE_DOMAIN}}
           predicates:
             - Path=/api/products/**
-          filters:
-            - StripPrefix=1
 
         - id: file-service
-          uri: http://file-service.railway.internal:8080
+          uri: https://${{file-service.RAILWAY_PRIVATE_DOMAIN}}
           predicates:
             - Path=/api/files/**
-          filters:
-            - StripPrefix=1
 
         - id: order-service-deploy
-          uri: http://order-service-deploy.railway.internal:8080
+          uri: https://${{order-service-deploy.RAILWAY_PRIVATE_DOMAIN}}
           predicates:
             - Path=/api/orders/**
-          filters:
-            - StripPrefix=1
 
         - id: stats-service
-          uri: http://stats-service.railway.internal:8080
+          uri: https://${{stats-service.RAILWAY_PRIVATE_DOMAIN}}
           predicates:
             - Path=/api/stats/**
-          filters:
-            - StripPrefix=1

@@ -22,10 +22,10 @@ public class GatewayConfig {
             // Log incoming requests
             String path = exchange.getRequest().getPath().toString();
             String method = exchange.getRequest().getMethod().toString();
-            
+
             System.out.println("Gateway routing request: " + method + " " + path);
             System.out.println("Active profile: " + activeProfile);
-            
+
             return chain.filter(exchange).then(Mono.fromRunnable(() -> {
                 // Log response status
                 int statusCode = exchange.getResponse().getStatusCode().value();
@@ -50,7 +50,7 @@ public class GatewayConfig {
         return (exchange, chain) -> {
             String requestId = java.util.UUID.randomUUID().toString().substring(0, 8);
             exchange.getAttributes().put("requestId", requestId);
-            
+
             return chain.filter(exchange);
         };
     }

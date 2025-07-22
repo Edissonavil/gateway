@@ -1,4 +1,3 @@
-# src/main/resources/application.yml
 server:
   port: ${PORT:8080}
 
@@ -8,14 +7,10 @@ spring:
 
   cloud:
     gateway:
-      discovery:
-        locator:
-          enabled: true  
-          lower-case-service-id: true
-
-      routes: [] # Deja routes vacío o elimínalo si no tienes rutas comunes.
-
-      globalcors: # Mantener CORS aquí ya que es global y no específico de perfiles de rutas
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
+      
+      globalcors:
         corsConfigurations:
           '[/**]':
             allowedOriginPatterns: "*"
@@ -30,6 +25,49 @@ spring:
             allowCredentials: true
             maxAge: 3600
 
+      routes:
+        - id: users-service-local
+          uri: http://localhost:8081
+          predicates:
+            - Path=/api/users/**
+          metadata:
+            profile: local
+
+        - id: auth-service-local
+          uri: http://localhost:8082
+          predicates:
+            - Path=/api/auth/**
+          metadata:
+            profile: local
+
+        - id: prod-service-local
+          uri: http://localhost:8083
+          predicates:
+            - Path=/api/products/**
+          metadata:
+            profile: local
+
+        - id: file-service-local
+          uri: http://localhost:8084
+          predicates:
+            - Path=/api/files/**
+          metadata:
+            profile: local
+
+        - id: order-service-local
+          uri: http://localhost:8085
+          predicates:
+            - Path=/api/orders/**
+          metadata:
+            profile: local
+
+        - id: stats-service-local
+          uri: http://localhost:8086
+          predicates:
+            - Path=/api/stats/**
+          metadata:
+            profile: local
+
 management:
   endpoints:
     web:
@@ -43,7 +81,7 @@ management:
 
 logging:
   level:
-    org.springframework.cloud.gateway: TRACE # Cambiamos a TRACE para la depuración
+    org.springframework.cloud.gateway: DEBUG
     org.springframework.web.cors: DEBUG
     com.aec.gateway: DEBUG
-    org.springframework.cloud.loadbalancer: TRACE # Añadimos TRACE para LoadBalancer
+    root: INFO
