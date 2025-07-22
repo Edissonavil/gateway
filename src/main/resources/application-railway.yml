@@ -10,10 +10,8 @@ spring:
         - id: file-service
           uri: http://${FILE_SERVICE_URL:file-service.railway.internal}:8084
           predicates:
-            - Path=/api/files/{id}/{filename}
+            - Path=/api/files/**
           filters:
-            - SetPath=/api/files/internal/{id}/{filename}  # Cambio clave aquí
-            - RemoveRequestHeader=Authorization
             - RemoveRequestHeader=Cookie
             - SetResponseHeader=Access-Control-Allow-Origin, *
             - SetResponseHeader=Access-Control-Allow-Methods, GET, OPTIONS
