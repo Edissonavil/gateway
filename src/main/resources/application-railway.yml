@@ -6,25 +6,34 @@ spring:
   cloud:
     gateway:
       routes:
+        - id: file-service
+          uri: http://${FILE_SERVICE_URL:file-service.railway.internal}:8084
+          predicates:
+            - Path=/api/files/** 
+          filters:
+            - StripPrefix=0
+
         - id: file-service-products
           uri: http://${FILE_SERVICE_URL:file-service.railway.internal}:8084
           predicates:
             - Path=/api/files/products/** 
           filters:
+            - StripPrefix=0
             - name: RewritePath
               args:
                 regexp: /api/files/products/(?<id>\d+)/(?<filename>.*)
-                replacement: /uploads/productos/$\{id}/$\{filename}
+                replacement: /api/files/productos/${id}/${filename}
 
         - id: file-service-receipts
           uri: http://${FILE_SERVICE_URL:file-service.railway.internal}:8084
           predicates:
             - Path=/api/files/receipts/** 
           filters:
+            - StripPrefix=0
             - name: RewritePath
               args:
                 regexp: /api/files/receipts/(?<id>\d+)/(?<filename>.*)
-                replacement: /uploads/comprobantes/$\{id}/$\{filename}
+                replacement: /api/files/comprobantes/${id}/${filename}
 
         - id: users-service
           uri: http://${USERS_SERVICE_URL:users-service.railway.internal}:8081
@@ -71,12 +80,10 @@ spring:
           predicates:
             - Path=/, /index.html, /static/**, /*.js, /*.css, /*.json, /*.png # Rutas para servir el frontend
 
-      # Configuración de descubrimiento de servicios para Railway
       discovery:
         locator:
           enabled: false
 
-# Configuración específica para Railway
 management:
   endpoints:
     web:
