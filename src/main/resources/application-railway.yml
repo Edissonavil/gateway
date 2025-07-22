@@ -8,31 +8,31 @@ spring:
     gateway:
       routes:
         - id: users-service
-          uri: https://${{USERS_SERVICE_URL}}
+          uri: ${{USERS_SERVICE_URL}}
           predicates:
             - Path=/api/users/**
 
         - id: auth-service
-          uri: https://${{AUTH_SERVICE_URL}}
+          uri: ${{AUTH_SERVICE_URL}}
           predicates:
             - Path=/api/auth/**
 
         - id: prod-service
-          uri: https://${{PROD_SERVICE_URL}}
+          uri: ${{PROD_SERVICE_URL}}
           predicates:
             - Path=/api/products/**
 
         - id: file-service
-          uri: https://${{FILE_SERVICE_URL}}
+          uri: ${{FILE_SERVICE_URL}}
           predicates:
             - Path=/api/files/**
 
         - id: order-service
-          uri: https://${{ORDER_SERVICE_URL}}
+          uri: ${{ORDER_SERVICE_URL}}
           predicates:
             - Path=/api/orders/**
 
         - id: stats-service
-          uri: https://${{STATS_SERVICE_URL}}
+          uri: ${{STATS_SERVICE_URL}}
           predicates:
             - Path=/api/stats/**
