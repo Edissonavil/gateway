@@ -37,7 +37,10 @@ spring:
           predicates:
             - Path=/api/files/**
           filters:
-            - StripPrefix=0
+            - name: RewritePath
+              args:
+                regexp: /api/files/(?<segment>.*) 
+                replacement: /uploads/$\{segment} 
 
         - id: order-service
           uri: http://${ORDER_SERVICE_URL:order-service-deploy.railway.internal}:8085
