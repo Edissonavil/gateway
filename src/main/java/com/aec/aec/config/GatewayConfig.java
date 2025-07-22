@@ -1,6 +1,5 @@
 package com.aec.aec.config;
 
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.context.annotation.Bean;
@@ -38,7 +37,8 @@ public class GatewayConfig {
     public GlobalFilter corsHeadersFilter() {
         return (exchange, chain) -> {
             exchange.getResponse().getHeaders().add(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
-            exchange.getResponse().getHeaders().add(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, "GET,POST,PUT,DELETE,OPTIONS,PATCH");
+            exchange.getResponse().getHeaders().add(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS,
+                    "GET,POST,PUT,DELETE,OPTIONS,PATCH");
             exchange.getResponse().getHeaders().add(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, "*");
             exchange.getResponse().getHeaders().add(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS, "true");
             return chain.filter(exchange);
@@ -51,6 +51,14 @@ public class GatewayConfig {
             String requestId = java.util.UUID.randomUUID().toString().substring(0, 8);
             exchange.getAttributes().put("requestId", requestId);
 
+            return chain.filter(exchange);
+        };
+    }
+
+    @Bean
+    public GlobalFilter loggingFilter() {
+        return (exchange, chain) -> {
+            System.out.println("Request body: " + exchange.getRequest().getBody());
             return chain.filter(exchange);
         };
     }

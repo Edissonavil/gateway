@@ -19,6 +19,10 @@ spring:
             - Path=/api/auth/**
           filters:
             - StripPrefix=0
+            - name: RewritePath
+          args:
+          regexp: /api/auth/(?<segment>.*)
+          replacement: /api/auth/$\{segment}
 
         - id: prod-service
           uri: http://${PROD_SERVICE_URL:prod-service.railway.internal}:8083
