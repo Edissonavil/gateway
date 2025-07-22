@@ -6,21 +6,21 @@ spring:
   cloud:
     gateway:
       routes:
-        # Configuración principal para archivos
+        # Configuración principal para archivos - VERSIÓN CORREGIDA
         - id: file-service
           uri: http://${FILE_SERVICE_URL:file-service.railway.internal}:8084
           predicates:
             - Path=/api/files/{id}/{filename}
           filters:
-            - RewritePath=/api/files/(?<id>\d+)/(?<filename>.*), /uploads/productos/$\{id}/$\{filename}
+            - SetPath=/api/files/internal/{id}/{filename}  # Cambio clave aquí
             - RemoveRequestHeader=Authorization
             - RemoveRequestHeader=Cookie
             - SetResponseHeader=Access-Control-Allow-Origin, *
             - SetResponseHeader=Access-Control-Allow-Methods, GET, OPTIONS
-            - SetResponseHeader=Access-Control-Allow-Headers, *
+            - SetResponseHeader=Access-Control-Expose-Headers, Content-Disposition
             - DedupeResponseHeader=Access-Control-Allow-Credentials, RETAIN_FIRST
 
-        # Servicio de usuarios
+        # Servicios adicionales (configuración original)
         - id: users-service
           uri: http://${USERS_SERVICE_URL:users-service.railway.internal}:8081
           predicates:
@@ -28,8 +28,7 @@ spring:
           filters:
             - StripPrefix=0
 
-        # Servicio de autenticación  
-        - id: auth-service
+        - id: auth-service  
           uri: http://${AUTH_SERVICE_URL:auth-service.railway.internal}:8082
           predicates:
             - Path=/api/auth/**
@@ -37,7 +36,6 @@ spring:
             - StripPrefix=0
             - RemoveRequestHeader=Cookie
 
-        # Servicio de productos
         - id: prod-service
           uri: http://${PROD_SERVICE_URL:prod-service.railway.internal}:8083
           predicates:
@@ -45,7 +43,6 @@ spring:
           filters:
             - StripPrefix=0
 
-        # Servicio de órdenes
         - id: order-service
           uri: http://${ORDER_SERVICE_URL:order-service-deploy.railway.internal}:8085
           predicates:
@@ -53,15 +50,13 @@ spring:
           filters:
             - StripPrefix=0
 
-        # Servicio de estadísticas
         - id: stats-service
           uri: http://${STATS_SERVICE_URL:stats-service.railway.internal}:8086
           predicates:
             - Path=/api/stats/**
           filters:
-            - StripPrefix=2
+            - StripPrefix=1
 
-        # Frontend
         - id: aecf-frontend
           uri: http://aecf.railway.internal:80
           predicates:
@@ -74,7 +69,7 @@ spring:
           enabled: false
       httpclient:
         connect-timeout: 10000
-        response-timeout: 30s
+        response-timeout: 60s  # Aumentado timeout
 
 management:
   endpoints:
@@ -90,7 +85,7 @@ management:
 
 logging:
   level:
-    org.springframework.cloud.gateway: DEBUG
+    org.springframework.cloud.gateway: TRACE  # Cambiado a TRACE para más detalle
     org.springframework.web: DEBUG
     reactor.netty: DEBUG
     root: INFO
