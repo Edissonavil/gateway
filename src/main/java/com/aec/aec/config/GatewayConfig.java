@@ -26,9 +26,9 @@ public class GatewayConfig {
     @Bean
     public CorsWebFilter corsWebFilter() {
         CorsConfiguration corsConfig = new CorsConfiguration();
-        corsConfig.setAllowedOrigins(Arrays.asList(allowedOrigins));
-        corsConfig.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
-        corsConfig.setAllowedHeaders(Arrays.asList("*"));
+        corsConfig.addAllowedOrigin("https://aecf-production.up.railway.app");
+        corsConfig.addAllowedMethod("*");
+        corsConfig.addAllowedHeader("*");
         corsConfig.setAllowCredentials(true);
         corsConfig.setMaxAge(3600L);
 
@@ -61,6 +61,7 @@ public class GatewayConfig {
                 });
         };
     }
+
 
     @Bean
     public GlobalFilter requestLoggingFilter() {
