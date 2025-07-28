@@ -86,3 +86,5 @@ logging:
     org.springframework.web: DEBUG
     reactor.netty: DEBUG
     root: INFO
+    feign: DEBUG
+    com.aec.ordsrv: DEBUG
