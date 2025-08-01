@@ -55,7 +55,7 @@ spring:
             - StripPrefix=0
 
         - id: aecf-frontend
-          uri: http://aecf.railway.internal:80
+          uri: https://aecblock.com
           predicates:
             - Path=/, /index.html, /static/**, /*.js, /*.css, /*.json, /*.png
           filters:
